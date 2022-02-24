@@ -1,0 +1,80 @@
+import 'package:flutter/material.dart';
+
+class Poster extends StatefulWidget {
+  final String id;
+  final String title;
+  final String type;
+  final String? imageUrl;
+
+  const Poster({
+    Key? key,
+    required this.id,
+    required this.title,
+    required this.type,
+    this.imageUrl,
+  }) : super(key: key);
+
+  @override
+  State<Poster> createState() => _PosterState();
+}
+
+class _PosterState extends State<Poster> {
+  bool isFocused = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Theme.of(context).colorScheme.surface,
+      child: InkWell(
+          key: Key(widget.id),
+          onFocusChange: (focused) {
+            setState(() {
+              isFocused = focused;
+            });
+          },
+          canRequestFocus: true,
+          focusColor: Theme.of(context).colorScheme.secondary,
+          onTap: () {
+            if (widget.type == 'movie') {
+              Navigator.pushNamed(context, '/movie', arguments: widget.id);
+            }
+
+            if (widget.type == 'show') {
+              Navigator.pushNamed(context, '/show', arguments: widget.id);
+            }
+          },
+          child: widget.imageUrl == null
+              ? Image.asset(
+                  'images/no_image.png',
+                )
+              : Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isFocused
+                          ? Theme.of(context).colorScheme.secondary
+                          : Colors.transparent,
+                      width: isFocused ? 3 : 0,
+                    ),
+                  ),
+                  child: Image.network(
+                    widget.imageUrl!,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, progress) {
+                      return progress == null
+                          ? child
+                          : Center(
+                              child: CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'images/no_image.png',
+                      );
+                    },
+                  ),
+                )),
+    );
+  }
+}
