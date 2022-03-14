@@ -4,6 +4,7 @@ import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/components/config_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../components/details_list.dart';
 import '../services/movies_service.dart';
 
 class MovieDetailsScreen extends StatefulWidget {
@@ -89,6 +90,7 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
               builder: (BuildContext context) {
                 return SingleChildScrollView(
                   child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 30),
@@ -107,12 +109,12 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                       const SizedBox(height: 12),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Text(
-                          '${movie.year}  •  ${movie.runtime} min  •  ${movie.certification}  •  ${movie.genres.join(' / ')}  •  ${movie.rating} ★',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
+                        child: DetailsList(
+                          year: movie.year,
+                          runtime: movie.runtime,
+                          certification: movie.certification,
+                          genres: movie.genres,
+                          rating: movie.rating,
                         ),
                       ),
                       const SizedBox(height: 18),
@@ -162,7 +164,7 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                                 return ConfigDialog(
                                   title: 'Audio',
                                   content: movie.torrents.keys.toList(),
-                                  onSelect: (int index) {
+                                  onSelect: (index) {
                                     setState(() {
                                       audioIndex = index;
                                     });
@@ -182,16 +184,16 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                         ),
                         leading: const Icon(Icons.high_quality_rounded),
                         trailing: Health(
-                          seeds: movie
+                          seed: movie
                               .torrents[
                                   movie.torrents.keys.toList()[audioIndex]]
                               .values
-                              .toList()[qualityIndex]['seeds'],
-                          peers: movie
+                              .toList()[qualityIndex]['seed'],
+                          peer: movie
                               .torrents[
                                   movie.torrents.keys.toList()[audioIndex]]
                               .values
-                              .toList()[qualityIndex]['peers'],
+                              .toList()[qualityIndex]['peer'],
                         ),
                         onTap: () {
                           showDialog(
@@ -204,7 +206,7 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                                           .toList()[audioIndex]]
                                       .keys
                                       .toList(),
-                                  onSelect: (int index) {
+                                  onSelect: (index) {
                                     setState(() {
                                       qualityIndex = index;
                                     });

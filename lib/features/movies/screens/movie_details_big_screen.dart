@@ -3,6 +3,8 @@ import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/components/config_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../components/details_list.dart';
+import '../../../components/health.dart';
 import '../services/movies_service.dart';
 
 class MovieDetailsBigScreen extends StatefulWidget {
@@ -82,123 +84,142 @@ class _MovieDetailBigScreenState extends State<MovieDetailsBigScreen> {
                   ),
                 ),
                 Expanded(
-                  flex: 2,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 30),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Text(
-                          snapshot.data!.title,
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
-                          softWrap: true,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Text(
-                          '${movie.year}  •  ${movie.runtime} min  •  ${movie.certification}  •  ${movie.genres.join(' / ')}  •  ${movie.rating} ★',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Theme.of(context).colorScheme.onBackground,
+                  flex: 3,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 30),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Text(
+                            snapshot.data!.title,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                            softWrap: true,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 18),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                        child: Text(
-                          movie.synopsis,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.onBackground,
+                        const SizedBox(height: 12),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: DetailsList(
+                            year: movie.year,
+                            runtime: movie.runtime,
+                            certification: movie.certification,
+                            genres: movie.genres,
+                            rating: movie.rating,
                           ),
-                          softWrap: true,
                         ),
-                      ),
-                      const SizedBox(height: 18),
-                      ListTile(
-                        title: const Text(
-                          'Watch Trailer',
+                        const SizedBox(height: 18),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Text(
+                            movie.synopsis,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.onBackground,
+                            ),
+                            softWrap: true,
+                          ),
                         ),
-                        leading: const Icon(Icons.play_circle_filled_rounded),
-                        onTap: () async {
-                          if (await canLaunch(movie.trailer!)) {
-                            await launch(movie.trailer!);
-                          } else {
-                            throw 'Could not launch ${movie.trailer}';
-                          }
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          subtitleIndex == 0 ? 'No Subtitles' : 'Subtitles',
+                        const SizedBox(height: 18),
+                        ListTile(
+                          title: const Text(
+                            'Watch Trailer',
+                          ),
+                          leading: const Icon(Icons.play_circle_filled_rounded),
+                          onTap: () async {
+                            if (await canLaunch(movie.trailer!)) {
+                              await launch(movie.trailer!);
+                            } else {
+                              throw 'Could not launch ${movie.trailer}';
+                            }
+                          },
                         ),
-                        leading: Icon(subtitleIndex == 0
-                            ? Icons.closed_caption_disabled_rounded
-                            : Icons.closed_caption_rounded),
-                        onTap: () {},
-                      ),
-                      ListTile(
-                        title: Text(
-                          movie.torrents.keys.toList()[audioIndex],
+                        ListTile(
+                          title: Text(
+                            subtitleIndex == 0 ? 'No Subtitles' : 'Subtitles',
+                          ),
+                          leading: Icon(subtitleIndex == 0
+                              ? Icons.closed_caption_disabled_rounded
+                              : Icons.closed_caption_rounded),
+                          onTap: () {},
                         ),
-                        leading: const Icon(Icons.volume_up_rounded),
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ConfigDialog(
-                                  title: 'Audio',
-                                  content: movie.torrents.keys.toList(),
-                                  onSelect: (int index) {
-                                    setState(() {
-                                      audioIndex = index;
-                                    });
-                                  },
-                                  selectedIndex: audioIndex,
-                                );
-                              });
-                        },
-                      ),
-                      ListTile(
-                        title: Text(
-                          movie
-                              .torrents[
-                                  movie.torrents.keys.toList()[audioIndex]]
-                              .keys
-                              .toList()[qualityIndex],
+                        ListTile(
+                          title: Text(
+                            movie.torrents.keys.toList()[audioIndex],
+                          ),
+                          leading: const Icon(Icons.volume_up_rounded),
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ConfigDialog(
+                                    title: 'Audio',
+                                    content: movie.torrents.keys.toList(),
+                                    onSelect: (index) {
+                                      setState(() {
+                                        audioIndex = index;
+                                      });
+                                    },
+                                    selectedIndex: audioIndex,
+                                  );
+                                });
+                          },
                         ),
-                        leading: const Icon(Icons.high_quality_rounded),
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ConfigDialog(
-                                  title: 'Quality',
-                                  content: movie
-                                      .torrents[movie.torrents.keys
-                                          .toList()[audioIndex]]
-                                      .keys
-                                      .toList(),
-                                  onSelect: (int index) {
-                                    setState(() {
-                                      qualityIndex = index;
-                                    });
-                                  },
-                                  selectedIndex: qualityIndex,
-                                );
-                              });
-                        },
-                      ),
-                    ],
+                        ListTile(
+                          title: Row(
+                            children: [
+                              Text(
+                                movie
+                                    .torrents[movie.torrents.keys
+                                        .toList()[audioIndex]]
+                                    .keys
+                                    .toList()[qualityIndex],
+                              ),
+                              const SizedBox(width: 8),
+                              Health(
+                                seed: movie
+                                    .torrents[movie.torrents.keys
+                                        .toList()[audioIndex]]
+                                    .values
+                                    .toList()[qualityIndex]['seed'],
+                                peer: movie
+                                    .torrents[movie.torrents.keys
+                                        .toList()[audioIndex]]
+                                    .values
+                                    .toList()[qualityIndex]['peer'],
+                              ),
+                            ],
+                          ),
+                          leading: const Icon(Icons.high_quality_rounded),
+                          onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return ConfigDialog(
+                                    title: 'Quality',
+                                    content: movie
+                                        .torrents[movie.torrents.keys
+                                            .toList()[audioIndex]]
+                                        .keys
+                                        .toList(),
+                                    onSelect: (index) {
+                                      setState(() {
+                                        qualityIndex = index;
+                                      });
+                                    },
+                                    selectedIndex: qualityIndex,
+                                  );
+                                });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

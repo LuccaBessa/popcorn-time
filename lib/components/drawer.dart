@@ -26,7 +26,7 @@ class DrawerComponent extends StatelessWidget {
                     height: 25,
                   ),
                   title: Text(
-                    'Popcorn-Time',
+                    'Popcorn Time',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 20,

@@ -30,15 +30,17 @@ class TorrentHealth {
   }
 
   static Color healthColor(num health) {
-    if (health == 1) {
+    int healthInt = health.toInt();
+
+    if (healthInt == 1) {
       return const Color(0xFFD53F3F);
     }
 
-    if (health == 2) {
+    if (healthInt == 2) {
       return const Color(0xFFECE523);
     }
 
-    if (health == 3) {
+    if (healthInt == 3) {
       return const Color(0xFFA3E147);
     }
 

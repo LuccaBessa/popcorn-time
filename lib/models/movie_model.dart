@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 class Movie {
   late String id;
   String type = "movie";
@@ -44,6 +46,9 @@ class Movie {
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
+    Map<String, dynamic> torrents =
+        sortTorrents(Map<String, dynamic>.from(json['torrents']));
+
     return Movie(
       id: json['_id'],
       imdbId: json['imdb_id'],
@@ -61,9 +66,21 @@ class Movie {
       synopsis: json['synopsis'],
       trailer: json['trailer'],
       certification: json['certification'],
-      torrents: Map<String, dynamic>.from(json['torrents']),
+      torrents: torrents,
       defaultAudio: json['contextLocale'],
       locale: json['locale'],
     );
+  }
+
+  static Map<String, dynamic> sortTorrents(Map<String, dynamic> torrents) {
+    torrents.forEach((key, value) {
+      torrents[key] = SplayTreeMap<String, dynamic>.from(value, (a, b) {
+        var regex = RegExp(r'[a-zA-Z]');
+        return int.parse(a.replaceAll(regex, ''))
+            .compareTo(int.parse(b.replaceAll(regex, '')));
+      });
+    });
+
+    return torrents;
   }
 }

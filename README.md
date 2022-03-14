@@ -1,16 +1,10 @@
-# popcorn_time
+# Popcorn-time
 
-A new Flutter project.
+A Multi-platform and free Bittorrent client with an integrated video-player that uses [pocorn-ru API](popcorn-ru.tk).
 
-## Getting Started
+## Technologies
+  - [Flutter](https://flutter.dev/)
+  - [TorrentStream-Android](https://github.com/TorrentStream/TorrentStream-Android)
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Architecture
+  - Folder-By-Feature

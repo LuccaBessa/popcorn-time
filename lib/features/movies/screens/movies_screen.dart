@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:popcorn_time/components/search_header.dart';
 import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
@@ -57,49 +58,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerComponent(),
-      appBar: AppBar(
-        title: isSearching
-            ? TextField(
-                autofocus: true,
-                textInputAction: TextInputAction.search,
-                onChanged: (value) {
-                  setState(() {
-                    keywords = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding: const EdgeInsets.all(10),
-                ),
-                onEditingComplete: () {
-                  setState(() {
-                    isSearching = false;
-                  });
-
-                  Navigator.pushNamed(
-                    context,
-                    '/searchedMovies',
-                    arguments: keywords,
-                  );
-                },
-              )
-            : const Text('Movies'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        actions: [
-          IconButton(
-            icon: Icon(!isSearching ? Icons.search : Icons.close),
-            onPressed: () {
-              setState(() {
-                isSearching = !isSearching;
-              });
-            },
-          ),
-        ],
+      appBar: SearchHeader(
+        title: 'Movies',
+        onSearch: (String keywords) => Navigator.pushNamed(
+          context,
+          '/searchedMovies',
+          arguments: keywords,
+        ),
       ),
       body: PosterGrid(controller: controller),
     );

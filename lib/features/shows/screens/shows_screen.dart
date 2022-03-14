@@ -5,6 +5,8 @@ import 'package:popcorn_time/components/poster_grid.dart';
 import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/models/show_model.dart';
 
+import '../../../components/search_header.dart';
+
 class ShowsScreen extends StatefulWidget {
   const ShowsScreen({Key? key}) : super(key: key);
 
@@ -59,49 +61,13 @@ class _ShowsScreenState extends State<ShowsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerComponent(),
-      appBar: AppBar(
-        title: isSearching
-            ? TextField(
-                autofocus: true,
-                textInputAction: TextInputAction.search,
-                onChanged: (value) {
-                  setState(() {
-                    keywords = value;
-                  });
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search',
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  contentPadding: const EdgeInsets.all(10),
-                ),
-                onEditingComplete: () {
-                  setState(() {
-                    isSearching = false;
-                  });
-
-                  Navigator.pushNamed(
-                    context,
-                    '/searchedShows',
-                    arguments: keywords,
-                  );
-                },
-              )
-            : const Text('TV Shows'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        actions: [
-          IconButton(
-            icon: Icon(!isSearching ? Icons.search : Icons.close),
-            onPressed: () {
-              setState(() {
-                isSearching = !isSearching;
-              });
-            },
-          ),
-        ],
+      appBar: SearchHeader(
+        title: 'TV Shows',
+        onSearch: (String keywords) => Navigator.pushNamed(
+          context,
+          '/searchedShows',
+          arguments: keywords,
+        ),
       ),
       body: PosterGrid(controller: controller),
     );
