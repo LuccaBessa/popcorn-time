@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ConfigDialog extends StatelessWidget {
   final String title;
   final List<String> content;
-  final Function(int) onSelect;
+  final Function(int, String) onSelect;
   final int selectedIndex;
 
   const ConfigDialog(
@@ -28,7 +28,7 @@ class ConfigDialog extends StatelessWidget {
               return RadioListTile(
                 groupValue: groupValue,
                 onChanged: (value) {
-                  onSelect(content.indexOf(e));
+                  onSelect(content.indexOf(e), e);
                   Navigator.pop(context);
                 },
                 value: content.indexOf(e),

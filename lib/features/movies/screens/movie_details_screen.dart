@@ -19,9 +19,19 @@ class MovieDetailsScreen extends StatefulWidget {
 class _MovieDetailScreenState extends State<MovieDetailsScreen> {
   MoviesService moviesService = MoviesService();
   late Future<Movie> futureMovie;
-  int subtitleIndex = 0;
-  int audioIndex = 0;
-  int qualityIndex = 0;
+  Map subtitle = {
+    'index': 0,
+    'value': '',
+  };
+  Map audio = {
+    'index': 0,
+    'value': '',
+  };
+  Map quality = {
+    'index': 0,
+    'value': '',
+  };
+  String url = '';
 
   @override
   void initState() {
@@ -37,6 +47,11 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
         Movie? movie = snapshot.data;
 
         if (movie != null) {
+          audio['value'] = movie.torrents.keys.toList()[audio['index']];
+          quality['value'] =
+              movie.torrents[audio['value']].keys.toList()[quality['index']];
+          url = movie.torrents[audio['value']][quality['value']]['url'];
+
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
@@ -56,7 +71,13 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
               ],
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (await canLaunch(url)) {
+                  await launch(url);
+                } else {
+                  throw 'Could not launch $url';
+                }
+              },
               child: const Icon(Icons.play_arrow),
               backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
@@ -145,16 +166,16 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                       ),
                       ListTile(
                         title: Text(
-                          subtitleIndex == 0 ? 'No Subtitles' : 'Subtitles',
+                          subtitle['index'] == 0 ? 'No Subtitles' : 'Subtitles',
                         ),
-                        leading: Icon(subtitleIndex == 0
+                        leading: Icon(subtitle['index'] == 0
                             ? Icons.closed_caption_disabled_rounded
                             : Icons.closed_caption_rounded),
                         onTap: () {},
                       ),
                       ListTile(
                         title: Text(
-                          movie.torrents.keys.toList()[audioIndex],
+                          audio['value'] == '' ? 'No Audio' : audio['value'],
                         ),
                         leading: const Icon(Icons.volume_up_rounded),
                         onTap: () {
@@ -164,36 +185,29 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                                 return ConfigDialog(
                                   title: 'Audio',
                                   content: movie.torrents.keys.toList(),
-                                  onSelect: (index) {
+                                  onSelect: (index, value) {
                                     setState(() {
-                                      audioIndex = index;
+                                      audio['index'] = index;
+                                      audio['value'] = value;
                                     });
                                   },
-                                  selectedIndex: audioIndex,
+                                  selectedIndex: audio['index'],
                                 );
                               });
                         },
                       ),
                       ListTile(
                         title: Text(
-                          movie
-                              .torrents[
-                                  movie.torrents.keys.toList()[audioIndex]]
-                              .keys
-                              .toList()[qualityIndex],
+                          quality['value'] == ''
+                              ? 'No Quality'
+                              : quality['value'],
                         ),
                         leading: const Icon(Icons.high_quality_rounded),
                         trailing: Health(
-                          seed: movie
-                              .torrents[
-                                  movie.torrents.keys.toList()[audioIndex]]
-                              .values
-                              .toList()[qualityIndex]['seed'],
-                          peer: movie
-                              .torrents[
-                                  movie.torrents.keys.toList()[audioIndex]]
-                              .values
-                              .toList()[qualityIndex]['peer'],
+                          seed: movie.torrents[audio['value']][quality['value']]
+                              ['seed'],
+                          peer: movie.torrents[audio['value']][quality['value']]
+                              ['peer'],
                         ),
                         onTap: () {
                           showDialog(
@@ -201,17 +215,17 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                               builder: (BuildContext context) {
                                 return ConfigDialog(
                                   title: 'Quality',
-                                  content: movie
-                                      .torrents[movie.torrents.keys
-                                          .toList()[audioIndex]]
-                                      .keys
+                                  content: movie.torrents[audio['value']].keys
                                       .toList(),
-                                  onSelect: (index) {
+                                  onSelect: (index, value) {
                                     setState(() {
-                                      qualityIndex = index;
+                                      quality['index'] = index;
+                                      quality['value'] = value;
+                                      url = movie.torrents[audio['value']]
+                                          [quality['value']]['url'];
                                     });
                                   },
-                                  selectedIndex: qualityIndex,
+                                  selectedIndex: quality['index'],
                                 );
                               });
                         },
