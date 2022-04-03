@@ -118,7 +118,7 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: Text(
-                          snapshot.data!.title,
+                          movie.title,
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -237,13 +237,12 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
               onClosing: () {},
             ),
           );
-        } else {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
         }
+        return const Scaffold(
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
       },
     );
   }

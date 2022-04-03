@@ -4,7 +4,7 @@ import 'package:popcorn_time/utils/certification_colors.dart';
 class DetailsList extends StatelessWidget {
   final String year;
   final String runtime;
-  final String certification;
+  final String? certification;
   final List<dynamic> genres;
   final double rating;
 
@@ -12,7 +12,7 @@ class DetailsList extends StatelessWidget {
     Key? key,
     required this.year,
     required this.runtime,
-    required this.certification,
+    this.certification,
     required this.genres,
     required this.rating,
   }) : super(key: key);
@@ -46,16 +46,16 @@ class DetailsList extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           ),
-          certification != ''
+          certification != null
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3.0),
                   child: Chip(
                     label: Text(
-                      certification,
+                      certification!,
                       style: const TextStyle(color: Colors.white),
                     ),
                     backgroundColor:
-                        CertificationColors.getColor(certification),
+                        CertificationColors.getColor(certification!),
                   ),
                 )
               : Container(),

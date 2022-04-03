@@ -5,6 +5,9 @@ class Show {
   int? tmdbId;
   String? title;
   String? year;
+  String? slug;
+  String? originalLanguage;
+  int? numberOfSeasons;
   List<dynamic>? genres;
   double? rating;
   String? runtime;
@@ -14,12 +17,8 @@ class Show {
   String? backdrop;
   String? poster;
   String? synopsis;
-  String? trailer;
-  String? certification;
-  Map<String, dynamic>? torrents;
-  Map<String, dynamic>? langs;
   String? defaultAudio;
-  String? locale;
+  List<Season>? seasons;
 
   Show({
     this.id,
@@ -27,6 +26,9 @@ class Show {
     this.tmdbId,
     this.title,
     this.year,
+    this.slug,
+    this.originalLanguage,
+    this.numberOfSeasons,
     this.genres,
     this.rating,
     this.runtime,
@@ -36,19 +38,38 @@ class Show {
     this.backdrop,
     this.poster,
     this.synopsis,
-    this.trailer,
-    this.certification,
     this.defaultAudio,
-    this.locale,
+    this.seasons,
   });
 
   factory Show.fromJson(Map<String, dynamic> json) {
+    List<Season> seasons = [];
+
+    if (json['episodes'] != null) {
+      for (var i = 1; i <= json['num_seasons']; i++) {
+        List<Episode> episodes = [];
+
+        for (var episode in (json['episodes'] as List<dynamic>)) {
+          if (episode['season'] == i) {
+            episodes.add(Episode.fromJson(episode));
+          }
+        }
+
+        episodes.sort((a, b) => a.number!.compareTo(b.number!));
+
+        seasons.add(Season(i, episodes));
+      }
+    }
+
     return Show(
       id: json['_id'],
       imdbId: json['imdb_id'],
       tmdbId: json['tmdb_id'],
       title: json['title'],
       year: json['year'],
+      slug: json['slug'],
+      originalLanguage: json['original_language'],
+      numberOfSeasons: json['num_seasons'],
       genres: json['genres'],
       rating: json['rating']['percentage'] / 10,
       runtime: json['runtime'],
@@ -58,10 +79,64 @@ class Show {
       backdrop: json['images'] != null ? json['images']['fanart'] : null,
       poster: json['images'] != null ? json['images']['poster'] : null,
       synopsis: json['synopsis'],
-      trailer: json['trailer'],
-      certification: json['certification'],
       defaultAudio: json['contextLocale'],
-      locale: json['locale'],
+      seasons: seasons.isNotEmpty ? seasons : null,
+    );
+  }
+}
+
+class Season {
+  int? number;
+  List<Episode> episodes = [];
+
+  Season(this.number, [this.episodes = const <Episode>[]]);
+
+  factory Season.fromJson(Map<String, dynamic> json) {
+    List<Episode> episodes = [];
+
+    if (json['episodes'] != null) {
+      for (var episode in (json['episodes'] as List<dynamic>)) {
+        episodes.add(Episode.fromJson(episode));
+      }
+
+      episodes.sort((a, b) => a.number!.compareTo(b.number!));
+    }
+
+    return Season(
+      json['number'],
+      episodes,
+    );
+  }
+}
+
+class Episode {
+  int? tvdbId;
+  int? number;
+  int? firstAired;
+  String? title;
+  String? overview;
+  bool? isWatched;
+  Map<String, dynamic>? torrents;
+
+  Episode({
+    this.tvdbId,
+    this.number,
+    this.firstAired,
+    this.title,
+    this.overview,
+    this.isWatched,
+    this.torrents,
+  });
+
+  factory Episode.fromJson(Map<String, dynamic> json) {
+    return Episode(
+      tvdbId: json['tvdb_id'],
+      number: json['episode'],
+      firstAired: json['first_aired'],
+      title: json['title'],
+      overview: json['overview'],
+      isWatched: json['is_watched'],
+      torrents: json['torrents'],
     );
   }
 }
