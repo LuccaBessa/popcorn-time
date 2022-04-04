@@ -225,10 +225,18 @@ class _ShowDetailsState extends State<ShowDetails> {
                                   elevation: 0,
                                   title: Text(
                                     episode!.title!,
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground,
+                                    ),
                                   ),
                                   leading: IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.arrow_back,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onBackground,
                                     ),
                                     onPressed: () {
                                       setState(() {
