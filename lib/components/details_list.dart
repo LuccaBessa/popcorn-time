@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn_time/utils/certification_colors.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class DetailsList extends StatelessWidget {
   final String year;
@@ -54,8 +54,7 @@ class DetailsList extends StatelessWidget {
                       certification!,
                       style: const TextStyle(color: Colors.white),
                     ),
-                    backgroundColor:
-                        CertificationColors.getColor(certification!),
+                    backgroundColor: Utils.certificationColor(certification!),
                   ),
                 )
               : Container(),

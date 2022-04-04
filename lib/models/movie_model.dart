@@ -1,4 +1,4 @@
-import 'dart:collection';
+import 'package:popcorn_time/utils/utils.dart';
 
 class Movie {
   late String id;
@@ -47,7 +47,7 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> json) {
     Map<String, dynamic> torrents =
-        sortTorrents(Map<String, dynamic>.from(json['torrents']));
+        Utils.sortTorrents(Map<String, dynamic>.from(json['torrents']), false);
 
     return Movie(
       id: json['_id'],
@@ -70,17 +70,5 @@ class Movie {
       defaultAudio: json['contextLocale'],
       locale: json['locale'],
     );
-  }
-
-  static Map<String, dynamic> sortTorrents(Map<String, dynamic> torrents) {
-    torrents.forEach((key, value) {
-      torrents[key] = SplayTreeMap<String, dynamic>.from(value, (a, b) {
-        var regex = RegExp(r'[a-zA-Z]');
-        return int.parse(a.replaceAll(regex, ''))
-            .compareTo(int.parse(b.replaceAll(regex, '')));
-      });
-    });
-
-    return torrents;
   }
 }
