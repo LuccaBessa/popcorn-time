@@ -8,6 +8,11 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ShowDetails extends StatefulWidget {
   final String id;
+  static const Map defaultMap = {
+    'index': 0,
+    'value': '',
+  };
+
   const ShowDetails({Key? key, required this.id}) : super(key: key);
 
   @override
@@ -19,14 +24,8 @@ class _ShowDetailsState extends State<ShowDetails> {
   late Future<Show> futureShow;
   bool showEpisode = false;
   Episode? episode;
-  Map subtitle = {
-    'index': 0,
-    'value': '',
-  };
-  Map quality = {
-    'index': 0,
-    'value': '',
-  };
+  Map subtitle = ShowDetails.defaultMap;
+  Map quality = ShowDetails.defaultMap;
   String url = '';
 
   @override
@@ -230,6 +229,9 @@ class _ShowDetailsState extends State<ShowDetails> {
                                     onPressed: () {
                                       setState(() {
                                         showEpisode = false;
+                                        subtitle = ShowDetails.defaultMap;
+                                        quality = ShowDetails.defaultMap;
+                                        url = '';
                                         episode = null;
                                       });
                                     },
