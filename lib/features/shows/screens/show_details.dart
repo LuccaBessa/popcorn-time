@@ -8,10 +8,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ShowDetails extends StatefulWidget {
   final String id;
-  static const Map defaultMap = {
-    'index': 0,
-    'value': '',
-  };
 
   const ShowDetails({Key? key, required this.id}) : super(key: key);
 
@@ -24,8 +20,14 @@ class _ShowDetailsState extends State<ShowDetails> {
   late Future<Show> futureShow;
   bool showEpisode = false;
   Episode? episode;
-  Map subtitle = ShowDetails.defaultMap;
-  Map quality = ShowDetails.defaultMap;
+  Map subtitle = {
+    'index': 0,
+    'value': '',
+  };
+  Map quality = {
+    'index': 0,
+    'value': '',
+  };
   String url = '';
 
   @override
@@ -112,6 +114,8 @@ class _ShowDetailsState extends State<ShowDetails> {
                             children: [
                               TabBar(
                                 isScrollable: true,
+                                labelColor:
+                                    Theme.of(context).colorScheme.onSurface,
                                 indicatorColor:
                                     Theme.of(context).colorScheme.onSurface,
                                 tabs: [
@@ -229,8 +233,14 @@ class _ShowDetailsState extends State<ShowDetails> {
                                     onPressed: () {
                                       setState(() {
                                         showEpisode = false;
-                                        subtitle = ShowDetails.defaultMap;
-                                        quality = ShowDetails.defaultMap;
+                                        subtitle = {
+                                          'index': 0,
+                                          'value': '',
+                                        };
+                                        quality = {
+                                          'index': 0,
+                                          'value': '',
+                                        };
                                         url = '';
                                         episode = null;
                                       });
