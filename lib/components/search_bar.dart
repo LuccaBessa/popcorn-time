@@ -61,7 +61,10 @@ class _SearchBarState extends State<SearchBar> {
           ),
           contentPadding: const EdgeInsets.all(12.0),
           suffixIcon: IconButton(
-            icon: const Icon(Icons.clear),
+            icon: Icon(
+              Icons.clear,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             onPressed: () {
               setState(() {
                 keywords = '';
