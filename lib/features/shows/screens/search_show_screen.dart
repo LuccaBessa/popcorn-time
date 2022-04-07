@@ -70,7 +70,7 @@ class _SearchShowScreenState extends State<SearchShowScreen> {
           getShows(0);
           FocusScope.of(context).unfocus();
         },
-        type: ContentType.movie,
+        type: ContentType.show,
       ),
       body: didSearch ? PosterGrid(controller: controller) : Container(),
     );
