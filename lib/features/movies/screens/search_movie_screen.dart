@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
-import 'package:popcorn_time/components/search_header.dart';
+import 'package:popcorn_time/components/search_bar.dart';
 import 'package:popcorn_time/features/movies/services/movies_service.dart';
 import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/utils/utils.dart';
@@ -17,7 +17,7 @@ class SearchMovieScreen extends StatefulWidget {
 class _SearchMovieScreenState extends State<SearchMovieScreen> {
   MoviesService moviesService = MoviesService();
   late PagingController<int, Movie> controller =
-      PagingController(firstPageKey: 0);
+      PagingController(firstPageKey: 1);
   String keywords = '';
   int pageSize = 20;
   bool didSearch = false;
@@ -60,7 +60,7 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerComponent(),
-      appBar: SearchHeader(
+      appBar: SearchBar(
         onSearch: (String keywords) {
           setState(() {
             this.keywords = keywords;

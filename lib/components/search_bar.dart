@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn_time/utils/utils.dart';
 
-class SearchHeader extends StatefulWidget implements PreferredSizeWidget {
+class SearchBar extends StatefulWidget implements PreferredSizeWidget {
   final Function onSearch;
   final ContentType type;
 
-  const SearchHeader({Key? key, required this.onSearch, required this.type})
+  const SearchBar({Key? key, required this.onSearch, required this.type})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -13,12 +13,13 @@ class SearchHeader extends StatefulWidget implements PreferredSizeWidget {
   final Size preferredSize;
 
   @override
-  State<SearchHeader> createState() => _SearchHeaderState();
+  State<SearchBar> createState() => _SearchBarState();
 }
 
-class _SearchHeaderState extends State<SearchHeader> {
+class _SearchBarState extends State<SearchBar> {
   String keywords = '';
   late FocusNode textFieldFocusNode;
+  TextEditingController textFieldController = TextEditingController();
 
   @override
   void initState() {
@@ -39,10 +40,12 @@ class _SearchHeaderState extends State<SearchHeader> {
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Navigator.of(context).pop(),
       ),
+      titleSpacing: 12.0,
       title: TextField(
         focusNode: textFieldFocusNode,
         autofocus: true,
         textInputAction: TextInputAction.search,
+        controller: textFieldController,
         onChanged: (value) {
           setState(() {
             keywords = value;
@@ -53,8 +56,19 @@ class _SearchHeaderState extends State<SearchHeader> {
               'Search for a ${widget.type == ContentType.movie ? 'movie' : 'show'}...',
           filled: true,
           fillColor: Theme.of(context).colorScheme.surface,
-          border: const OutlineInputBorder(),
-          contentPadding: const EdgeInsets.all(10),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          ),
+          contentPadding: const EdgeInsets.all(12.0),
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              setState(() {
+                keywords = '';
+              });
+              textFieldController.clear();
+            },
+          ),
         ),
         onEditingComplete: () {
           widget.onSearch(keywords);

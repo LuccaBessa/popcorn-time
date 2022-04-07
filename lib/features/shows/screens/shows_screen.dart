@@ -15,9 +15,7 @@ class ShowsScreen extends StatefulWidget {
 class _ShowsScreenState extends State<ShowsScreen> {
   ShowsService showsService = ShowsService();
   late PagingController<int, Show> controller =
-      PagingController(firstPageKey: 0);
-  late PagingController<int, Show> searchController =
-      PagingController(firstPageKey: 0);
+      PagingController(firstPageKey: 1);
   bool isSearching = false;
   String keywords = '';
   int pageSize = 20;

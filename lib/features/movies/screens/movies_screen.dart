@@ -15,7 +15,7 @@ class MoviesScreen extends StatefulWidget {
 class _MoviesScreenState extends State<MoviesScreen> {
   MoviesService moviesService = MoviesService();
   late PagingController<int, Movie> controller =
-      PagingController(firstPageKey: 0);
+      PagingController(firstPageKey: 1);
   bool isSearching = false;
   String keywords = '';
   int pageSize = 20;
