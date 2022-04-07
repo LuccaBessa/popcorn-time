@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class Poster extends StatefulWidget {
   final String id;
   final String title;
-  final String type;
+  final ContentType type;
   final String? imageUrl;
 
   const Poster({
@@ -35,11 +36,11 @@ class _PosterState extends State<Poster> {
           canRequestFocus: true,
           focusColor: Theme.of(context).colorScheme.secondary,
           onTap: () {
-            if (widget.type == 'movie') {
+            if (widget.type == ContentType.movie) {
               Navigator.pushNamed(context, '/movie', arguments: widget.id);
             }
 
-            if (widget.type == 'show') {
+            if (widget.type == ContentType.show) {
               Navigator.pushNamed(context, '/show', arguments: widget.id);
             }
           },

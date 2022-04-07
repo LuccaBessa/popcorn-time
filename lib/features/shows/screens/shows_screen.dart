@@ -5,8 +5,6 @@ import 'package:popcorn_time/components/poster_grid.dart';
 import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/models/show_model.dart';
 
-import '../../../components/search_header.dart';
-
 class ShowsScreen extends StatefulWidget {
   const ShowsScreen({Key? key}) : super(key: key);
 
@@ -61,13 +59,21 @@ class _ShowsScreenState extends State<ShowsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerComponent(),
-      appBar: SearchHeader(
-        title: 'TV Shows',
-        onSearch: (String keywords) => Navigator.pushNamed(
-          context,
-          '/searchedShows',
-          arguments: keywords,
-        ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text('TV Shows'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                '/searchShow',
+                arguments: keywords,
+              );
+            },
+          ),
+        ],
       ),
       body: PosterGrid(controller: controller),
     );

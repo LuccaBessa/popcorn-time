@@ -9,8 +9,8 @@ import 'package:popcorn_time/features/favorites/screens/favorites.dart';
 import 'package:popcorn_time/features/movies/screens/movie_details_big_screen.dart';
 import 'package:popcorn_time/features/movies/screens/movie_details_screen.dart';
 import 'package:popcorn_time/features/movies/screens/movies_screen.dart';
-import 'package:popcorn_time/features/movies/screens/searched_movies_screen.dart';
-import 'package:popcorn_time/features/shows/screens/searched_shows_screen.dart';
+import 'package:popcorn_time/features/movies/screens/search_movie_screen.dart';
+import 'package:popcorn_time/features/shows/screens/search_show_screen.dart';
 import 'package:popcorn_time/features/shows/screens/show_details.dart';
 import 'package:popcorn_time/features/shows/screens/shows_screen.dart';
 
@@ -87,8 +87,7 @@ class _MyAppState extends State<MyApp> {
           initialRoute: '/movies',
           routes: {
             '/movies': (context) => const MoviesScreen(),
-            '/searchedMovies': (context) => SearchedMoviesScreen(
-                keywords: ModalRoute.of(context)!.settings.arguments as String),
+            '/searchMovie': (context) => const SearchMovieScreen(),
             '/movie': (context) {
               if (Platform.isLinux ||
                   Platform.isMacOS ||
@@ -120,8 +119,7 @@ class _MyAppState extends State<MyApp> {
                 id: ModalRoute.of(context)!.settings.arguments as String,
               );
             },
-            '/searchedShows': (context) => SearchedShowsScreen(
-                keywords: ModalRoute.of(context)!.settings.arguments as String),
+            '/searchShow': (context) => const SearchShowScreen(),
             '/animes': (context) => const AnimesScreen(),
             '/favorites': (context) => const FavoritesScreen(),
           },

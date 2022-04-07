@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
+import 'package:popcorn_time/components/search_header.dart';
+import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/models/show_model.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
-class SearchedShowsScreen extends StatefulWidget {
-  final String keywords;
-  const SearchedShowsScreen({Key? key, required this.keywords})
-      : super(key: key);
+class SearchShowScreen extends StatefulWidget {
+  const SearchShowScreen({Key? key}) : super(key: key);
 
   @override
-  State<SearchedShowsScreen> createState() => _SearchedShowsScreenState();
+  State<SearchShowScreen> createState() => _SearchShowScreenState();
 }
 
-class _SearchedShowsScreenState extends State<SearchedShowsScreen> {
+class _SearchShowScreenState extends State<SearchShowScreen> {
   ShowsService showsService = ShowsService();
   late PagingController<int, Show> controller =
       PagingController(firstPageKey: 0);
+  String keywords = '';
   int pageSize = 20;
+  bool didSearch = false;
 
   @override
   void initState() {
     super.initState();
-    controller.addPageRequestListener(((pageKey) => getShows(pageKey)));
+    controller.addPageRequestListener(((pageKey) {}));
   }
 
   @override
@@ -37,7 +39,7 @@ class _SearchedShowsScreenState extends State<SearchedShowsScreen> {
       final newItems = await showsService.getShowsByKeywords(
         page: pageKey,
         pageSize: pageSize,
-        keywords: widget.keywords,
+        keywords: keywords,
       );
       final isLastPage = newItems.length < pageSize;
 
@@ -58,16 +60,19 @@ class _SearchedShowsScreenState extends State<SearchedShowsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerComponent(),
-      appBar: AppBar(
-        title: Text(widget.keywords),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: SearchHeader(
+        onSearch: (String keywords) {
+          setState(() {
+            this.keywords = keywords;
+            didSearch = true;
+          });
+          controller.refresh();
+          getShows(0);
+          FocusScope.of(context).unfocus();
+        },
+        type: ContentType.movie,
       ),
-      body: PosterGrid(controller: controller),
+      body: didSearch ? PosterGrid(controller: controller) : Container(),
     );
   }
 }

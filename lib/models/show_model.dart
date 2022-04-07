@@ -2,7 +2,7 @@ import 'package:popcorn_time/utils/utils.dart';
 
 class Show {
   String? id;
-  String type = 'show';
+  ContentType type = ContentType.show;
   String? imdbId;
   int? tmdbId;
   String? title;
@@ -131,8 +131,8 @@ class Episode {
   });
 
   factory Episode.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> torrents =
-        Utils.sortTorrents(Map<String, dynamic>.from(json['torrents']), true);
+    Map<String, dynamic> torrents = Utils.sortTorrents(
+        Map<String, dynamic>.from(json['torrents']), ContentType.show);
 
     return Episode(
       tvdbId: json['tvdb_id'],

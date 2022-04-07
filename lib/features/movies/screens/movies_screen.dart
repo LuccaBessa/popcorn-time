@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:popcorn_time/components/search_header.dart';
 import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
@@ -58,13 +57,21 @@ class _MoviesScreenState extends State<MoviesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const DrawerComponent(),
-      appBar: SearchHeader(
-        title: 'Movies',
-        onSearch: (String keywords) => Navigator.pushNamed(
-          context,
-          '/searchedMovies',
-          arguments: keywords,
-        ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text('Movies'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                '/searchMovie',
+                arguments: keywords,
+              );
+            },
+          ),
+        ],
       ),
       body: PosterGrid(controller: controller),
     );

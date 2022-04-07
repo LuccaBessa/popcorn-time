@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class Utils {
   static Map<String, dynamic> sortTorrents(
-      Map<String, dynamic> torrents, bool isShow) {
-    if (isShow) {
+      Map<String, dynamic> torrents, ContentType type) {
+    if (type == ContentType.show) {
       torrents = SplayTreeMap<String, dynamic>.from(torrents, (a, b) {
         var regex = RegExp(r'[a-zA-Z]');
         return int.parse(a.replaceAll(regex, ''))
@@ -48,3 +48,5 @@ class Utils {
     return Colors.grey;
   }
 }
+
+enum ContentType { movie, show }

@@ -2,7 +2,7 @@ import 'package:popcorn_time/utils/utils.dart';
 
 class Movie {
   late String id;
-  String type = "movie";
+  ContentType type = ContentType.movie;
   late String imdbId;
   late int tmdbId;
   late String title;
@@ -46,8 +46,8 @@ class Movie {
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> torrents =
-        Utils.sortTorrents(Map<String, dynamic>.from(json['torrents']), false);
+    Map<String, dynamic> torrents = Utils.sortTorrents(
+        Map<String, dynamic>.from(json['torrents']), ContentType.movie);
 
     return Movie(
       id: json['_id'],

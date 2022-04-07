@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class SearchHeader extends StatefulWidget implements PreferredSizeWidget {
-  final String title;
   final Function onSearch;
+  final ContentType type;
 
-  const SearchHeader({Key? key, required this.title, required this.onSearch})
+  const SearchHeader({Key? key, required this.onSearch, required this.type})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -16,7 +17,6 @@ class SearchHeader extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _SearchHeaderState extends State<SearchHeader> {
-  bool isSearching = false;
   String keywords = '';
   late FocusNode textFieldFocusNode;
 
@@ -35,45 +35,33 @@ class _SearchHeaderState extends State<SearchHeader> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: isSearching
-          ? TextField(
-              focusNode: textFieldFocusNode,
-              autofocus: true,
-              textInputAction: TextInputAction.search,
-              onChanged: (value) {
-                setState(() {
-                  keywords = value;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Search',
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.surface,
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.all(10),
-              ),
-              onEditingComplete: () {
-                setState(() {
-                  isSearching = false;
-                });
-
-                widget.onSearch(keywords);
-              },
-            )
-          : Text(widget.title),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () => Navigator.of(context).pop(),
+      ),
+      title: TextField(
+        focusNode: textFieldFocusNode,
+        autofocus: true,
+        textInputAction: TextInputAction.search,
+        onChanged: (value) {
+          setState(() {
+            keywords = value;
+          });
+        },
+        decoration: InputDecoration(
+          hintText:
+              'Search for a ${widget.type == ContentType.movie ? 'movie' : 'show'}...',
+          filled: true,
+          fillColor: Theme.of(context).colorScheme.surface,
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.all(10),
+        ),
+        onEditingComplete: () {
+          widget.onSearch(keywords);
+        },
+      ),
       backgroundColor: Theme.of(context).colorScheme.primary,
       foregroundColor: Theme.of(context).colorScheme.onPrimary,
-      actions: [
-        IconButton(
-          icon: Icon(!isSearching ? Icons.search : Icons.close),
-          onPressed: () {
-            setState(() {
-              isSearching = !isSearching;
-            });
-            textFieldFocusNode.requestFocus();
-          },
-        ),
-      ],
     );
   }
 }
