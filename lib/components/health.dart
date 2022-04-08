@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn_time/utils/torrent_health.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class Health extends StatelessWidget {
   final int seed, peer;
@@ -9,13 +9,13 @@ class Health extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    num health = TorrentHealth.calcHealth(seed, peer);
+    num health = Utils.calcHealth(seed, peer);
 
     return Container(
       height: 10.0,
       width: 10.0,
       decoration: BoxDecoration(
-        color: TorrentHealth.healthColor(health),
+        color: Utils.healthColor(health),
         shape: BoxShape.circle,
       ),
     );

@@ -51,27 +51,30 @@ class _SearchBarState extends State<SearchBar> {
             keywords = value;
           });
         },
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         decoration: InputDecoration(
           hintText:
               'Search for a ${widget.type == ContentType.movie ? 'movie' : 'show'}...',
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.surface,
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          focusColor: Theme.of(context).colorScheme.onSurface,
+          hintStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
           ),
           contentPadding: const EdgeInsets.all(12.0),
-          suffixIcon: IconButton(
-            icon: Icon(
-              Icons.clear,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            onPressed: () {
-              setState(() {
-                keywords = '';
-              });
-              textFieldController.clear();
-            },
-          ),
+          suffixIcon: keywords != ''
+              ? IconButton(
+                  icon: Icon(
+                    Icons.clear,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      keywords = '';
+                    });
+                    textFieldController.clear();
+                    textFieldFocusNode.requestFocus();
+                  },
+                )
+              : null,
         ),
         onEditingComplete: () {
           widget.onSearch(keywords);
