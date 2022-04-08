@@ -4,7 +4,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:popcorn_time/features/animes/screens/animes.dart';
+import 'package:popcorn_time/features/animes/screens/animes_screen.dart';
+import 'package:popcorn_time/features/animes/screens/search_anime_screen.dart';
 import 'package:popcorn_time/features/favorites/screens/favorites.dart';
 import 'package:popcorn_time/features/movies/screens/movie_details_big_screen.dart';
 import 'package:popcorn_time/features/movies/screens/movie_details_screen.dart';
@@ -120,6 +121,7 @@ class _MyAppState extends State<MyApp> {
               );
             },
             '/searchShow': (context) => const SearchShowScreen(),
+            '/searchAnime': (context) => const SearchAnimeScreen(),
             '/animes': (context) => const AnimesScreen(),
             '/favorites': (context) => const FavoritesScreen(),
           },

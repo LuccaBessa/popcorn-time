@@ -17,7 +17,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
-  String keywords = '';
+  bool showClear = true;
   late FocusNode textFieldFocusNode;
   TextEditingController textFieldController = TextEditingController();
 
@@ -36,52 +36,57 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      titleSpacing: 12.0,
-      title: TextField(
-        focusNode: textFieldFocusNode,
-        autofocus: true,
-        textInputAction: TextInputAction.search,
-        controller: textFieldController,
-        onChanged: (value) {
-          setState(() {
-            keywords = value;
-          });
-        },
-        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-        decoration: InputDecoration(
-          hintText:
-              'Search for a ${widget.type == ContentType.movie ? 'movie' : 'show'}...',
-          focusColor: Theme.of(context).colorScheme.onSurface,
-          hintStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-          ),
-          contentPadding: const EdgeInsets.all(12.0),
-          suffixIcon: keywords != ''
-              ? IconButton(
-                  icon: Icon(
-                    Icons.clear,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      keywords = '';
-                    });
-                    textFieldController.clear();
-                    textFieldFocusNode.requestFocus();
-                  },
-                )
-              : null,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        onEditingComplete: () {
-          widget.onSearch(keywords);
-        },
-      ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-    );
+        titleSpacing: 12.0,
+        title: TextField(
+          focusNode: textFieldFocusNode,
+          controller: textFieldController,
+          autofocus: true,
+          onChanged: (value) {
+            if (value.isEmpty) {
+              setState(() {
+                showClear = false;
+              });
+            } else {
+              setState(() {
+                showClear = true;
+              });
+            }
+          },
+          onSubmitted: (value) {
+            textFieldFocusNode.unfocus();
+            if (value.isNotEmpty) {
+              widget.onSearch(value);
+            }
+          },
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
+            decoration: TextDecoration.none,
+          ),
+          cursorColor: Theme.of(context).colorScheme.secondary,
+          decoration: InputDecoration(
+            hintText: 'Search for a ' + widget.type.toString().split('.').last,
+            border: InputBorder.none,
+            hintStyle:
+                TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            suffixIcon: showClear
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      textFieldController.clear();
+                      setState(() {
+                        showClear = false;
+                      });
+                      textFieldFocusNode.requestFocus();
+                    },
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  )
+                : null,
+          ),
+        ));
   }
 }

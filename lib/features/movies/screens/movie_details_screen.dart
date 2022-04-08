@@ -72,10 +72,25 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () async {
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  throw 'Could not launch $url';
+                try {
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    throw ErrorDescription('Could not launch $url');
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Theme.of(context).colorScheme.error,
+                      content: Text(
+                        'Could not find Torrent App',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onError,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  );
                 }
               },
               child: const Icon(Icons.play_arrow),

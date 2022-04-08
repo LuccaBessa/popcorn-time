@@ -94,4 +94,4 @@ class Utils {
   }
 }
 
-enum ContentType { movie, show }
+enum ContentType { movie, show, anime }
