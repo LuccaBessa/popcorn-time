@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class DrawerComponent extends StatelessWidget {
@@ -10,32 +12,21 @@ class DrawerComponent extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            padding: EdgeInsets.zero,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  leading: Image.asset(
-                    'images/icon.png',
-                    width: 25,
-                    height: 25,
-                  ),
-                  title: Text(
-                    'Popcorn Time',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontSize: 20,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 1.0,
+                  colors: [
+                    Color(0xFF292926),
+                    Color(0xFF000000),
+                  ],
+                ),
+              ),
+              padding: EdgeInsets.zero,
+              child: Image.asset(
+                'images/banner.jpg',
+                fit: BoxFit.cover,
+              )),
           ListTile(
             leading: const Icon(Icons.local_movies_rounded),
             title: const Text('Movies'),
