@@ -17,7 +17,7 @@ class SearchBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _SearchBarState extends State<SearchBar> {
-  bool showClear = true;
+  bool showClear = false;
   late FocusNode textFieldFocusNode;
   TextEditingController textFieldController = TextEditingController();
 
@@ -69,7 +69,9 @@ class _SearchBarState extends State<SearchBar> {
           ),
           cursorColor: Theme.of(context).colorScheme.secondary,
           decoration: InputDecoration(
-            hintText: 'Search for a ' + widget.type.toString().split('.').last,
+            hintText: 'Search for a ' +
+                widget.type.toString().split('.').last +
+                '...',
             border: InputBorder.none,
             hintStyle:
                 TextStyle(color: Theme.of(context).colorScheme.onPrimary),

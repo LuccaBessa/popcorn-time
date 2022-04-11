@@ -46,7 +46,7 @@ class DetailsList extends StatelessWidget {
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           ),
-          certification != null
+          certification?.isNotEmpty == true
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 3.0),
                   child: Chip(
