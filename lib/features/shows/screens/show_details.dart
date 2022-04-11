@@ -205,8 +205,12 @@ class _ShowDetailsState extends State<ShowDetails> {
                                         itemCount: season.episodes.length,
                                         itemBuilder: (context, index) {
                                           return ListTile(
-                                            leading: Text(
-                                              'E${season.episodes[index].number}',
+                                            leading: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'E${season.episodes[index].number}',
+                                              ),
                                             ),
                                             title: Text(
                                               season.episodes[index].title!,
