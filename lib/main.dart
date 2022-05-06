@@ -7,12 +7,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:popcorn_time/features/animes/screens/animes_screen.dart';
 import 'package:popcorn_time/features/animes/screens/search_anime_screen.dart';
 import 'package:popcorn_time/features/favorites/screens/favorites.dart';
-import 'package:popcorn_time/features/movies/screens/movie_details_big_screen.dart';
+import 'package:popcorn_time/features/movies/screens/movie_details_large_screen.dart';
 import 'package:popcorn_time/features/movies/screens/movie_details_screen.dart';
 import 'package:popcorn_time/features/movies/screens/movies_screen.dart';
 import 'package:popcorn_time/features/movies/screens/search_movie_screen.dart';
 import 'package:popcorn_time/features/shows/screens/search_show_screen.dart';
 import 'package:popcorn_time/features/shows/screens/show_details.dart';
+import 'package:popcorn_time/features/shows/screens/show_details_large_screen.dart';
 import 'package:popcorn_time/features/shows/screens/shows_screen.dart';
 
 Future main() async {
@@ -35,12 +36,14 @@ Future<AndroidDeviceInfo> getDeviceInfo() async {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<AndroidDeviceInfo> info;
+  Future<AndroidDeviceInfo>? info;
 
   @override
   void initState() {
     super.initState();
-    info = getDeviceInfo();
+    if (Platform.isAndroid) {
+      info = getDeviceInfo();
+    }
   }
 
   @override
@@ -95,7 +98,7 @@ class _MyAppState extends State<MyApp> {
                   Platform.isWindows ||
                   snapshot.data!.systemFeatures
                       .contains('android.software.leanback')) {
-                return MovieDetailsBigScreen(
+                return MovieDetailsLargeScreen(
                   id: ModalRoute.of(context)!.settings.arguments as String,
                 );
               }
@@ -111,7 +114,7 @@ class _MyAppState extends State<MyApp> {
                   Platform.isWindows ||
                   snapshot.data!.systemFeatures
                       .contains('android.software.leanback')) {
-                return ShowDetails(
+                return ShowDetailsLargeScreen(
                   id: ModalRoute.of(context)!.settings.arguments as String,
                 );
               }

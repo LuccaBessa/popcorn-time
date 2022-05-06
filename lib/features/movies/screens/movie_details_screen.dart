@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:popcorn_time/components/details_list.dart';
 import 'package:popcorn_time/components/health.dart';
+import 'package:popcorn_time/features/movies/services/movies_service.dart';
 import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/components/config_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../../components/details_list.dart';
-import '../services/movies_service.dart';
 
 class MovieDetailsScreen extends StatefulWidget {
   final String id;

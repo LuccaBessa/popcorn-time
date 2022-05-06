@@ -28,22 +28,38 @@ class DrawerComponent extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.local_movies_rounded),
             title: const Text('Movies'),
-            onTap: () => Navigator.pushNamed(context, '/movies'),
+            onTap: () => Navigator.pushNamedAndRemoveUntil(
+              context,
+              "/movies",
+              (r) => false,
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.tv_rounded),
             title: const Text('TV Shows'),
-            onTap: () => Navigator.pushNamed(context, '/shows'),
+            onTap: () => Navigator.pushNamedAndRemoveUntil(
+              context,
+              "/shows",
+              (r) => false,
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.catching_pokemon_rounded),
             title: const Text('Animes'),
-            onTap: () => Navigator.pushNamed(context, '/animes'),
+            onTap: () => Navigator.pushNamedAndRemoveUntil(
+              context,
+              "/animes",
+              (r) => false,
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.favorite_rounded),
             title: const Text('Favorites'),
-            onTap: () => Navigator.pushNamed(context, '/favorites'),
+            onTap: () => Navigator.pushNamedAndRemoveUntil(
+              context,
+              "/favorites",
+              (r) => false,
+            ),
           ),
         ],
       ),
