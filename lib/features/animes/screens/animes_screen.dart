@@ -4,6 +4,7 @@ import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
 import 'package:popcorn_time/features/animes/services/animes_service.dart';
 import 'package:popcorn_time/models/anime_model.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class AnimesScreen extends StatefulWidget {
   const AnimesScreen({Key? key}) : super(key: key);
@@ -73,7 +74,7 @@ class _AnimesScreenState extends State<AnimesScreen> {
           ),
         ],
       ),
-      body: PosterGrid(controller: controller),
+      body: PosterGrid(controller: controller, contentType: ContentType.anime),
     );
   }
 }

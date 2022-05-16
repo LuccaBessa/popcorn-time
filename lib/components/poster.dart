@@ -6,12 +6,14 @@ class Poster extends StatefulWidget {
   final String title;
   final ContentType type;
   final String? imageUrl;
+  final bool? autoFocus;
 
   const Poster({
     Key? key,
     required this.id,
     required this.title,
     required this.type,
+    this.autoFocus,
     this.imageUrl,
   }) : super(key: key);
 
@@ -28,6 +30,7 @@ class _PosterState extends State<Poster> {
       color: Theme.of(context).colorScheme.surface,
       child: InkWell(
           key: Key(widget.id),
+          autofocus: widget.autoFocus ?? false,
           onFocusChange: (focused) {
             setState(() {
               isFocused = focused;

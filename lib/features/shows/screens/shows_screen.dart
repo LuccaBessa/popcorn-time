@@ -4,9 +4,11 @@ import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
 import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/models/show_model.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class ShowsScreen extends StatefulWidget {
-  const ShowsScreen({Key? key}) : super(key: key);
+  final bool isLargeScreen;
+  const ShowsScreen({Key? key, this.isLargeScreen = false}) : super(key: key);
 
   @override
   State<ShowsScreen> createState() => _ShowsScreenState();
@@ -73,7 +75,11 @@ class _ShowsScreenState extends State<ShowsScreen> {
           ),
         ],
       ),
-      body: PosterGrid(controller: controller),
+      body: PosterGrid(
+        controller: controller,
+        contentType: ContentType.show,
+        autoFocus: widget.isLargeScreen,
+      ),
     );
   }
 }

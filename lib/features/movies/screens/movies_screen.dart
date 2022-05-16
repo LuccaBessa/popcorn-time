@@ -4,9 +4,12 @@ import 'package:popcorn_time/models/movie_model.dart';
 import 'package:popcorn_time/components/drawer.dart';
 import 'package:popcorn_time/components/poster_grid.dart';
 import 'package:popcorn_time/features/movies/services/movies_service.dart';
+import 'package:popcorn_time/utils/utils.dart';
 
 class MoviesScreen extends StatefulWidget {
-  const MoviesScreen({Key? key}) : super(key: key);
+  final bool isTV;
+
+  const MoviesScreen({Key? key, this.isTV = false}) : super(key: key);
 
   @override
   State<MoviesScreen> createState() => _MoviesScreenState();
@@ -73,7 +76,11 @@ class _MoviesScreenState extends State<MoviesScreen> {
           ),
         ],
       ),
-      body: PosterGrid(controller: controller),
+      body: PosterGrid(
+        controller: controller,
+        contentType: ContentType.movie,
+        autoFocus: widget.isTV,
+      ),
     );
   }
 }

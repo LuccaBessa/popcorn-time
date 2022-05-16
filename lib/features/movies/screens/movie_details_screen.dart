@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:popcorn_time/components/details_list.dart';
-import 'package:popcorn_time/components/health.dart';
+import 'package:popcorn_time/components/select_audio.dart';
+import 'package:popcorn_time/components/select_quality.dart';
+import 'package:popcorn_time/components/select_subtitles.dart';
+import 'package:popcorn_time/components/watch_trailer.dart';
 import 'package:popcorn_time/features/movies/services/movies_service.dart';
 import 'package:popcorn_time/models/movie_model.dart';
-import 'package:popcorn_time/components/config_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MovieDetailsScreen extends StatefulWidget {
@@ -38,6 +40,29 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
     futureMovie = moviesService.getMovieById(widget.id);
   }
 
+  void onPressFloatingActionButton() async {
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw ErrorDescription('Could not launch $url');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).colorScheme.error,
+          content: Text(
+            'Could not find Torrent App',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onError,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Movie>(
@@ -70,28 +95,7 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
               ],
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                try {
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    throw ErrorDescription('Could not launch $url');
-                  }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                      content: Text(
-                        'Could not find Torrent App',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onError,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-              },
+              onPressed: onPressFloatingActionButton,
               child: const Icon(Icons.play_arrow),
               backgroundColor: Theme.of(context).colorScheme.secondary,
             ),
@@ -165,84 +169,43 @@ class _MovieDetailScreenState extends State<MovieDetailsScreen> {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      ListTile(
-                        title: const Text(
-                          'Watch Trailer',
-                        ),
-                        leading: const Icon(Icons.play_circle_filled_rounded),
-                        onTap: () async {
-                          if (await canLaunch(movie.trailer!)) {
-                            await launch(movie.trailer!);
-                          } else {
-                            throw 'Could not launch ${movie.trailer}';
-                          }
-                        },
+                      WatchTrailer(
+                        url: movie.trailer!,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      ListTile(
-                        title: Text(
-                          subtitle['index'] == 0 ? 'No Subtitles' : 'Subtitles',
-                        ),
-                        leading: Icon(subtitle['index'] == 0
-                            ? Icons.closed_caption_disabled_rounded
-                            : Icons.closed_caption_rounded),
-                        onTap: () {},
+                      SelectSubtitles(
+                        subtitle: subtitle,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      ListTile(
-                        title: Text(
-                          audio['value'] == '' ? 'No Audio' : audio['value'],
-                        ),
-                        leading: const Icon(Icons.volume_up_rounded),
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ConfigDialog(
-                                  title: 'Audio',
-                                  content: movie.torrents.keys.toList(),
-                                  onSelect: (index, value) {
-                                    setState(() {
-                                      audio['index'] = index;
-                                      audio['value'] = value;
-                                    });
-                                  },
-                                  selectedIndex: audio['index'],
-                                );
-                              });
+                      SelectAudio(
+                        audio: audio,
+                        audioList: movie.torrents.keys.toList(),
+                        onSelect: (index, value) {
+                          setState(() {
+                            audio['index'] = index;
+                            audio['value'] = value;
+                          });
                         },
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      ListTile(
-                        title: Text(
-                          quality['value'] == ''
-                              ? 'No Quality'
-                              : quality['value'],
-                        ),
-                        leading: const Icon(Icons.high_quality_rounded),
-                        trailing: Health(
-                          seed: movie.torrents[audio['value']][quality['value']]
-                              ['seed'],
-                          peer: movie.torrents[audio['value']][quality['value']]
-                              ['peer'],
-                        ),
-                        onTap: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return ConfigDialog(
-                                  title: 'Quality',
-                                  content: movie.torrents[audio['value']].keys
-                                      .toList(),
-                                  onSelect: (index, value) {
-                                    setState(() {
-                                      quality['index'] = index;
-                                      quality['value'] = value;
-                                      url = movie.torrents[audio['value']]
-                                          [quality['value']]['url'];
-                                    });
-                                  },
-                                  selectedIndex: quality['index'],
-                                );
-                              });
+                      SelectQuality(
+                        quality: quality,
+                        qualitiesList:
+                            movie.torrents[audio['value']].keys.toList(),
+                        onSelect: (index, value) {
+                          setState(() {
+                            quality['index'] = index;
+                            quality['value'] = value;
+                            url = movie.torrents[audio['value']]
+                                [quality['value']]['url'];
+                          });
                         },
+                        seed: movie.torrents[audio['value']][quality['value']]
+                            ['seed'],
+                        peer: movie.torrents[audio['value']][quality['value']]
+                            ['peer'],
+                        color: Theme.of(context).colorScheme.onSurface,
+                        hasCloseHealth: false,
                       ),
                     ],
                   ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:popcorn_time/components/config_dialog.dart';
 import 'package:popcorn_time/components/details_list.dart';
-import 'package:popcorn_time/components/health.dart';
+import 'package:popcorn_time/components/select_quality.dart';
+import 'package:popcorn_time/components/select_subtitles.dart';
+import 'package:popcorn_time/features/shows/components/episode_list_tile.dart';
+import 'package:popcorn_time/features/shows/components/show_tab_bar.dart';
 import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/models/show_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -36,6 +38,29 @@ class _ShowDetailsState extends State<ShowDetails> {
     futureShow = showsService.getShowById(widget.id);
   }
 
+  void onPressFloatingActionButton() async {
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).colorScheme.error,
+          content: Text(
+            'Could not find a Torrent App',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onError,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Show>(
@@ -64,6 +89,13 @@ class _ShowDetailsState extends State<ShowDetails> {
                   ),
                 ],
               ),
+              floatingActionButton: showEpisode
+                  ? FloatingActionButton(
+                      onPressed: onPressFloatingActionButton,
+                      child: const Icon(Icons.play_arrow),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    )
+                  : null,
               body: OrientationBuilder(
                 builder: (context, orientation) {
                   return Image.network(
@@ -86,35 +118,6 @@ class _ShowDetailsState extends State<ShowDetails> {
                   );
                 },
               ),
-              floatingActionButton: showEpisode
-                  ? FloatingActionButton(
-                      onPressed: () async {
-                        try {
-                          if (await canLaunch(url)) {
-                            await launch(url);
-                          } else {
-                            throw 'Could not launch $url';
-                          }
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.error,
-                              content: Text(
-                                'Could not find a Torrent App',
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onError,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      child: const Icon(Icons.play_arrow),
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                    )
-                  : null,
               bottomSheet: BottomSheet(
                 enableDrag: false,
                 constraints: BoxConstraints(
@@ -128,21 +131,9 @@ class _ShowDetailsState extends State<ShowDetails> {
                           mainAxisSize: MainAxisSize.max,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            TabBar(
-                              isScrollable: true,
-                              labelColor:
-                                  Theme.of(context).colorScheme.onSurface,
-                              indicatorColor:
-                                  Theme.of(context).colorScheme.onSurface,
-                              tabs: [
-                                const Tab(
-                                  text: 'About',
-                                ),
-                                for (final season in show.seasons!)
-                                  Tab(
-                                    text: 'Season ${season.number}',
-                                  ),
-                              ],
+                            ShowTabBar(
+                              seasons: show.seasons!,
+                              isOnLargeScreen: false,
                             ),
                             Expanded(
                               flex: 1,
@@ -204,16 +195,11 @@ class _ShowDetailsState extends State<ShowDetails> {
                                     ListView.builder(
                                       itemCount: season.episodes.length,
                                       itemBuilder: (context, index) {
-                                        return ListTile(
-                                          leading: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                              'E${season.episodes[index].number}',
-                                            ),
-                                          ),
-                                          title: Text(
-                                            season.episodes[index].title!,
-                                          ),
+                                        return EpisodeListTile(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface,
+                                          episode: season.episodes[index],
                                           onTap: () {
                                             setState(() {
                                               episode = season.episodes[index];
@@ -289,50 +275,27 @@ class _ShowDetailsState extends State<ShowDetails> {
                                 ),
                               ),
                               const SizedBox(height: 18),
-                              ListTile(
-                                title: Text(
-                                  subtitle['index'] == 0
-                                      ? 'No Subtitles'
-                                      : 'Subtitles',
-                                ),
-                                leading: Icon(subtitle['index'] == 0
-                                    ? Icons.closed_caption_disabled_rounded
-                                    : Icons.closed_caption_rounded),
-                                onTap: () {},
+                              SelectSubtitles(
+                                subtitle: subtitle,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              ListTile(
-                                title: Text(
-                                  quality['value'] == ''
-                                      ? 'No Quality'
-                                      : quality['value'],
-                                ),
-                                leading: const Icon(Icons.high_quality_rounded),
-                                trailing: Health(
-                                  seed: episode!.torrents![quality['value']]
-                                      ['seeds'],
-                                  peer: episode!.torrents![quality['value']]
-                                      ['peers'],
-                                ),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return ConfigDialog(
-                                          title: 'Quality',
-                                          content:
-                                              episode!.torrents!.keys.toList(),
-                                          onSelect: (index, value) {
-                                            setState(() {
-                                              quality['index'] = index;
-                                              quality['value'] = value;
-                                              url = episode!.torrents![
-                                                  quality['value']]['url'];
-                                            });
-                                          },
-                                          selectedIndex: quality['index'],
-                                        );
-                                      });
+                              SelectQuality(
+                                quality: quality,
+                                qualitiesList: episode!.torrents!.keys.toList(),
+                                onSelect: (index, value) {
+                                  setState(() {
+                                    quality['index'] = index;
+                                    quality['value'] = value;
+                                    url = episode!.torrents![quality['value']]
+                                        ['url'];
+                                  });
                                 },
+                                seed: episode!.torrents![quality['value']]
+                                    ['seeds'],
+                                peer: episode!.torrents![quality['value']]
+                                    ['peers'],
+                                color: Theme.of(context).colorScheme.onSurface,
+                                hasCloseHealth: false,
                               ),
                             ],
                           ),

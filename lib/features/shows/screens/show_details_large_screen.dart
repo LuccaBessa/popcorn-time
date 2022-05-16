@@ -1,9 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:popcorn_time/components/config_dialog.dart';
 import 'package:popcorn_time/components/details_list.dart';
-import 'package:popcorn_time/components/health.dart';
+import 'package:popcorn_time/components/select_quality.dart';
+import 'package:popcorn_time/components/select_subtitles.dart';
+import 'package:popcorn_time/features/shows/components/episode_list_tile.dart';
+import 'package:popcorn_time/features/shows/components/show_tab_bar.dart';
 import 'package:popcorn_time/features/shows/services/shows_service.dart';
 import 'package:popcorn_time/models/show_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +21,6 @@ class ShowDetailsLargeScreen extends StatefulWidget {
 class _ShowDetailsLargeScreenState extends State<ShowDetailsLargeScreen> {
   ShowsService showsService = ShowsService();
   late Future<Show> futureShow;
-  bool showEpisode = false;
   Episode? episode;
   Map subtitle = {
     'index': 0,
@@ -37,74 +38,93 @@ class _ShowDetailsLargeScreenState extends State<ShowDetailsLargeScreen> {
     futureShow = showsService.getShowById(widget.id);
   }
 
+  void onPressFloatingButton(context) async {
+    try {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).colorScheme.error,
+          content: Text(
+            'Could not find a Torrent App',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onError,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   void showEpisodeInfo(BuildContext context) {
-    showBottomSheet(
+    showModalBottomSheet(
         context: context,
         builder: (context) {
-          return WillPopScope(
-            onWillPop: () {
+          return BottomSheet(
+            onClosing: () {
               setState(() {
-                showEpisode = false;
+                subtitle = {
+                  'index': 0,
+                  'value': '',
+                };
+                quality = {
+                  'index': 0,
+                  'value': '',
+                };
+                url = '';
+                episode = null;
               });
-              return Future.value(true);
             },
-            child: BottomSheet(
-              onClosing: () {
-                setState(() {
-                  showEpisode = false;
-                  subtitle = {
-                    'index': 0,
-                    'value': '',
-                  };
-                  quality = {
-                    'index': 0,
-                    'value': '',
-                  };
-                  url = '';
-                  episode = null;
-                });
-              },
-              builder: (context) => SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppBar(
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                      title: Text(
-                        episode!.title!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onBackground,
-                        ),
-                      ),
-                      leading: IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Theme.of(context).colorScheme.onBackground,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            showEpisode = false;
-                            subtitle = {
-                              'index': 0,
-                              'value': '',
-                            };
-                            quality = {
-                              'index': 0,
-                              'value': '',
-                            };
-                            url = '';
-                            episode = null;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text(
+            builder: (context) => Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                title: Text(
+                  episode!.title!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                ),
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      subtitle = {
+                        'index': 0,
+                        'value': '',
+                      };
+                      quality = {
+                        'index': 0,
+                        'value': '',
+                      };
+                      url = '';
+                      episode = null;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => onPressFloatingButton(context),
+                child: const Icon(Icons.play_arrow),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+              ),
+              body: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
                         episode!.overview!,
                         style: TextStyle(
                           fontSize: 16,
@@ -112,49 +132,28 @@ class _ShowDetailsLargeScreenState extends State<ShowDetailsLargeScreen> {
                         ),
                         softWrap: true,
                       ),
-                    ),
-                    const SizedBox(height: 18),
-                    ListTile(
-                      title: Text(
-                        subtitle['index'] == 0 ? 'No Subtitles' : 'Subtitles',
+                      const SizedBox(height: 18),
+                      SelectSubtitles(
+                        subtitle: subtitle,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
-                      leading: Icon(subtitle['index'] == 0
-                          ? Icons.closed_caption_disabled_rounded
-                          : Icons.closed_caption_rounded),
-                      onTap: () {},
-                    ),
-                    ListTile(
-                      title: Text(
-                        quality['value'] == ''
-                            ? 'No Quality'
-                            : quality['value'],
-                      ),
-                      leading: const Icon(Icons.high_quality_rounded),
-                      trailing: Health(
+                      SelectQuality(
+                        quality: quality,
+                        qualitiesList: episode!.torrents!.keys.toList(),
+                        onSelect: (index, value) {
+                          setState(() {
+                            quality['index'] = index;
+                            quality['value'] = value;
+                            url = episode!.torrents![quality['value']]['url'];
+                          });
+                        },
                         seed: episode!.torrents![quality['value']]['seeds'],
                         peer: episode!.torrents![quality['value']]['peers'],
+                        color: Theme.of(context).colorScheme.onSurface,
+                        hasCloseHealth: false,
                       ),
-                      onTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return ConfigDialog(
-                                title: 'Quality',
-                                content: episode!.torrents!.keys.toList(),
-                                onSelect: (index, value) {
-                                  setState(() {
-                                    quality['index'] = index;
-                                    quality['value'] = value;
-                                    url = episode!.torrents![quality['value']]
-                                        ['url'];
-                                  });
-                                },
-                                selectedIndex: quality['index'],
-                              );
-                            });
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -204,38 +203,6 @@ class _ShowDetailsLargeScreenState extends State<ShowDetailsLargeScreen> {
                         ),
                       ],
                     ),
-                    floatingActionButton: showEpisode
-                        ? FloatingActionButton(
-                            onPressed: () async {
-                              try {
-                                if (await canLaunch(url)) {
-                                  await launch(url);
-                                } else {
-                                  throw 'Could not launch $url';
-                                }
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.error,
-                                    content: Text(
-                                      'Could not find a Torrent App',
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onError,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: const Icon(Icons.play_arrow),
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary,
-                          )
-                        : null,
                     body: Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -267,21 +234,9 @@ class _ShowDetailsLargeScreenState extends State<ShowDetailsLargeScreen> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TabBar(
-                                isScrollable: true,
-                                labelColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                indicatorColor:
-                                    Theme.of(context).colorScheme.onPrimary,
-                                tabs: [
-                                  const Tab(
-                                    text: 'About',
-                                  ),
-                                  for (final season in show.seasons!)
-                                    Tab(
-                                      text: 'Season ${season.number}',
-                                    ),
-                                ],
+                              ShowTabBar(
+                                seasons: show.seasons!,
+                                isOnLargeScreen: true,
                               ),
                               Expanded(
                                 child: TabBarView(
@@ -339,45 +294,32 @@ class _ShowDetailsLargeScreenState extends State<ShowDetailsLargeScreen> {
                                       ),
                                     ),
                                     for (final season in show.seasons!)
-                                      ListView.builder(
-                                        itemCount: season.episodes.length,
-                                        itemBuilder: (context, index) {
-                                          return ListTile(
-                                            leading: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'E${season.episodes[index].number}',
-                                                style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary,
-                                                ),
-                                              ),
-                                            ),
-                                            title: Text(
-                                              season.episodes[index].title!,
-                                              style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimary,
-                                              ),
-                                            ),
-                                            onTap: () {
-                                              setState(() {
-                                                episode =
-                                                    season.episodes[index];
-                                                quality['value'] = episode!
-                                                    .torrents!.keys
-                                                    .toList()[quality['index']];
-                                                url = episode!.torrents![
-                                                    quality['value']]['url'];
-                                                showEpisode = true;
-                                              });
-                                              showEpisodeInfo(context);
-                                            },
-                                          );
-                                        },
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: ListView.builder(
+                                          itemCount: season.episodes.length,
+                                          itemBuilder: (context, index) {
+                                            return EpisodeListTile(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimary,
+                                              episode: season.episodes[index],
+                                              onTap: () {
+                                                setState(() {
+                                                  episode =
+                                                      season.episodes[index];
+                                                  quality['value'] = episode!
+                                                          .torrents!.keys
+                                                          .toList()[
+                                                      quality['index']];
+                                                  url = episode!.torrents![
+                                                      quality['value']]['url'];
+                                                });
+                                                showEpisodeInfo(context);
+                                              },
+                                            );
+                                          },
+                                        ),
                                       ),
                                   ],
                                 ),

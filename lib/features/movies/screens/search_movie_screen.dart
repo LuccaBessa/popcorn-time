@@ -72,7 +72,9 @@ class _SearchMovieScreenState extends State<SearchMovieScreen> {
         },
         type: ContentType.movie,
       ),
-      body: didSearch ? PosterGrid(controller: controller) : Container(),
+      body: didSearch
+          ? PosterGrid(controller: controller, contentType: ContentType.movie)
+          : Container(),
     );
   }
 }

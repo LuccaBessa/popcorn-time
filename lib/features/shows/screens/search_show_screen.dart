@@ -72,7 +72,9 @@ class _SearchShowScreenState extends State<SearchShowScreen> {
         },
         type: ContentType.show,
       ),
-      body: didSearch ? PosterGrid(controller: controller) : Container(),
+      body: didSearch
+          ? PosterGrid(controller: controller, contentType: ContentType.show)
+          : Container(),
     );
   }
 }

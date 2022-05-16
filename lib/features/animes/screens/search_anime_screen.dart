@@ -72,7 +72,9 @@ class _SearchAnimeScreenState extends State<SearchAnimeScreen> {
         },
         type: ContentType.anime,
       ),
-      body: didSearch ? PosterGrid(controller: controller) : Container(),
+      body: didSearch
+          ? PosterGrid(controller: controller, contentType: ContentType.anime)
+          : Container(),
     );
   }
 }
