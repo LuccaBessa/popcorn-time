@@ -23,7 +23,7 @@ class MoviesService {
       },
     ).then((response) {
       response.data.forEach((movie) {
-        if (movie['torrents'] != null) {
+        if (movie['torrents'] != null && movie['torrents'].isNotEmpty) {
           movies.add(Movie.fromJson(movie));
         }
       });
@@ -48,7 +48,7 @@ class MoviesService {
       },
     ).then((response) {
       response.data.forEach((movie) {
-        if (movie['torrents'] != null) {
+        if (movie['torrents'] != null && movie['torrents'].isNotEmpty) {
           movies.add(Movie.fromJson(movie));
         }
       });
