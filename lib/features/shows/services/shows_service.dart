@@ -23,9 +23,7 @@ class ShowsService {
       },
     ).then((response) {
       response.data.forEach((show) {
-        if (show['torrents'] != null && show['torrents'].isNotEmpty) {
-          shows.add(Show.fromJson(show));
-        }
+        shows.add(Show.fromJson(show));
       });
     });
 
@@ -45,9 +43,7 @@ class ShowsService {
       },
     ).then((response) {
       response.data.forEach((show) {
-        if (show['torrents'] != null && show['torrents'].isNotEmpty) {
-          shows.add(Show.fromJson(show));
-        }
+        shows.add(Show.fromJson(show));
       });
     });
 
